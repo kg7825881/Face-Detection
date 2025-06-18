@@ -1,0 +1,27 @@
+import cv2
+import dlib
+
+cap = cv2.VideoCapture(0)
+detector = dlib.get_frontal_face_detector()
+
+while True:
+	ret, frame = cap.read()
+	if not ret:
+		break
+
+	frame = cv2.flip(frame, 1)
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	faces = detector(gray)
+
+	for i, face in enumerate(faces, start=1):
+		x, y, x1, y1 = face.left(), face.top(), face.right(), face.bottom()
+		cv2.rectangle(frame, (x, y), (x1, y1), (0, 255, 0), 2)
+		cv2.putText(frame, f'Face {i}', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+	cv2.imshow('Face Detection', frame)
+
+	if cv2.waitKey(1) == ord('q'):
+		break
+
+cap.release()
+cv2.destroyAllWindows()
